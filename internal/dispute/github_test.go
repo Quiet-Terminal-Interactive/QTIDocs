@@ -23,7 +23,7 @@ func TestHTTPGitHub_ListOpenIssues(t *testing.T) {
 			t.Errorf("Authorization = %q, want Bearer tok", auth)
 		}
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode([]map[string]any{
+		_ = json.NewEncoder(w).Encode([]map[string]any{
 			{
 				"number": 1,
 				"body":   "Deadline: 2026-01-01",
@@ -68,7 +68,7 @@ func TestHTTPGitHub_CommentOnIssue(t *testing.T) {
 		if r.URL.Path != "/repos/owner/repo/issues/5/comments" {
 			t.Errorf("path = %s", r.URL.Path)
 		}
-		json.NewDecoder(r.Body).Decode(&gotBody)
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
 		w.WriteHeader(http.StatusCreated)
 	}))
 	defer srv.Close()
@@ -102,7 +102,7 @@ func TestHTTPGitHub_AddLabel(t *testing.T) {
 		if r.URL.Path != "/repos/owner/repo/issues/7/labels" {
 			t.Errorf("path = %s", r.URL.Path)
 		}
-		json.NewDecoder(r.Body).Decode(&gotBody)
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer srv.Close()
@@ -139,7 +139,7 @@ func TestHTTPGitHub_CloseIssue(t *testing.T) {
 		if r.URL.Path != "/repos/owner/repo/issues/9" {
 			t.Errorf("path = %s", r.URL.Path)
 		}
-		json.NewDecoder(r.Body).Decode(&gotBody)
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer srv.Close()

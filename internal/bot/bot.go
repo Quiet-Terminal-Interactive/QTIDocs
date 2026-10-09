@@ -67,7 +67,7 @@ func (r GitHubReporter) ReportBuildFailure(ctx context.Context, job build.Job, b
 	if err != nil {
 		return fmt.Errorf("bot: opening issue on %s/%s: %w", job.Owner, job.Repo, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("bot: opening issue on %s/%s: unexpected status %s", job.Owner, job.Repo, resp.Status)

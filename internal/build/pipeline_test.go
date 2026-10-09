@@ -190,7 +190,7 @@ func TestPipeline_Run_CleansUpPreviousOutput(t *testing.T) {
 	store := newFakeStore()
 	oldOutput := t.TempDir()
 	marker := filepath.Join(oldOutput, "marker.txt")
-	os.WriteFile(marker, []byte("old"), 0o644)
+	_ = os.WriteFile(marker, []byte("old"), 0o644)
 	store.entries["acme"] = storage.Entry{Subdomain: "acme", OutputDir: oldOutput}
 
 	fetcher := &fakeFetcher{tarballs: map[string][]byte{"main": simpleTarball(t)}}
@@ -369,9 +369,9 @@ func TestHasVersion(t *testing.T) {
 
 func TestDirSize(t *testing.T) {
 	dir := t.TempDir()
-	os.WriteFile(filepath.Join(dir, "a.txt"), []byte("12345"), 0o644)
-	os.Mkdir(filepath.Join(dir, "sub"), 0o755)
-	os.WriteFile(filepath.Join(dir, "sub", "b.txt"), []byte("123"), 0o644)
+	_ = os.WriteFile(filepath.Join(dir, "a.txt"), []byte("12345"), 0o644)
+	_ = os.Mkdir(filepath.Join(dir, "sub"), 0o755)
+	_ = os.WriteFile(filepath.Join(dir, "sub", "b.txt"), []byte("123"), 0o644)
 
 	size, err := dirSize(dir)
 	if err != nil {

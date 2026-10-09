@@ -155,7 +155,7 @@ func TestHandleStatsData_DefaultRange(t *testing.T) {
 	s.ServeHTTP(rec, req)
 
 	var resp statsResponse
-	json.Unmarshal(rec.Body.Bytes(), &resp)
+	_ = json.Unmarshal(rec.Body.Bytes(), &resp)
 	if resp.Range != "7d" {
 		t.Errorf("Range = %q, want 7d default", resp.Range)
 	}

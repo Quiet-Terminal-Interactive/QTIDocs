@@ -71,6 +71,6 @@ func SweepHandler(store storage.Store, builder Builder, secret string) http.Hand
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{"status":"accepted","torn_down":%d}`, torn)
+		_, _ = fmt.Fprintf(w, `{"status":"accepted","torn_down":%d}`, torn)
 	})
 }

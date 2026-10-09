@@ -50,7 +50,7 @@ func (g HTTPGitHub) HasWriteAccess(ctx context.Context, owner, repo, user string
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusNotFound {
 		return false, nil
@@ -73,7 +73,7 @@ func (g HTTPGitHub) OrgMember(ctx context.Context, org, user string) (bool, erro
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	switch resp.StatusCode {
 	case http.StatusNoContent:
@@ -90,7 +90,7 @@ func (g HTTPGitHub) PathExists(ctx context.Context, owner, repo, ref, path strin
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	switch resp.StatusCode {
 	case http.StatusOK:

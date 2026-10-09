@@ -71,7 +71,7 @@ func PreviewDeployHandler(store storage.Store, enqueue func(build.Job)) http.Han
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{"status":"accepted","jobs":%d}`, jobs)
+		_, _ = fmt.Fprintf(w, `{"status":"accepted","jobs":%d}`, jobs)
 	})
 }
 
@@ -105,6 +105,6 @@ func PreviewTeardownHandler(store storage.Store) http.Handler {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprint(w, `{"status":"accepted"}`)
+		_, _ = fmt.Fprint(w, `{"status":"accepted"}`)
 	})
 }

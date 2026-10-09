@@ -62,7 +62,7 @@ func InternalBuildHandler(store storage.Store, enqueue func(build.Job), secret s
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{"status":"accepted","subdomain":%q}`, req.Subdomain)
+		_, _ = fmt.Fprintf(w, `{"status":"accepted","subdomain":%q}`, req.Subdomain)
 	})
 }
 
@@ -99,7 +99,7 @@ func InternalTeardownHandler(store storage.Store, secret string) http.Handler {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{"status":"accepted","subdomain":%q}`, req.Subdomain)
+		_, _ = fmt.Fprintf(w, `{"status":"accepted","subdomain":%q}`, req.Subdomain)
 	})
 }
 

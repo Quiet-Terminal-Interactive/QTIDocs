@@ -53,7 +53,7 @@ func (f GitHubFetcher) Fetch(ctx context.Context, owner, repo, ref string) (io.R
 		return nil, fmt.Errorf("build: fetching tarball for %s/%s@%s: %w", owner, repo, ref, err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		return nil, fmt.Errorf("build: fetching tarball for %s/%s@%s: unexpected status %s", owner, repo, ref, resp.Status)
 	}
 	return resp.Body, nil
@@ -73,7 +73,7 @@ func Extract(r io.Reader, configuredPath, parentDir string, limits Limits) (Extr
 
 	res, err := extract(r, configuredPath, destDir, limits)
 	if err != nil {
-		os.RemoveAll(destDir)
+		_ = os.RemoveAll(destDir)
 		return ExtractResult{}, err
 	}
 	res.Dir = destDir
@@ -85,7 +85,7 @@ func extract(r io.Reader, configuredPath, destDir string, limits Limits) (Extrac
 	if err != nil {
 		return ExtractResult{}, fmt.Errorf("build: opening tarball: %w", err)
 	}
-	defer gz.Close()
+	defer func() { _ = gz.Close() }()
 	tr := tar.NewReader(gz)
 
 	var res ExtractResult
@@ -153,7 +153,7 @@ func extractFile(r io.Reader, target string, remaining int64) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("build: %w", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	n, err := io.Copy(f, io.LimitReader(r, remaining+1))
 	if err != nil {

@@ -53,10 +53,10 @@ func TestRun_RegistersAddedEntry(t *testing.T) {
 		var body struct {
 			Subdomain string `json:"subdomain"`
 		}
-		json.NewDecoder(r.Body).Decode(&body)
+		_ = json.NewDecoder(r.Body).Decode(&body)
 		gotSubdomain = body.Subdomain
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{"status":"accepted","subdomain":"acme"}`))
+		_, _ = w.Write([]byte(`{"status":"accepted","subdomain":"acme"}`))
 	}))
 	defer srv.Close()
 
@@ -140,12 +140,14 @@ func TestRun_AuthorizationHeaderSet(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotAuth = r.Header.Get("Authorization")
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{}`))
+		_, _ = w.Write([]byte(`{}`))
 	}))
 	defer srv.Close()
 
 	client := &http.Client{Timeout: 5 * time.Second}
-	run("sites", base, srv.URL, "my-secret", client)
+	if err := run("sites", base, srv.URL, "my-secret", client); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if gotAuth != "Bearer my-secret" {
 		t.Errorf("Authorization = %q, want Bearer my-secret", gotAuth)
 	}
@@ -160,9 +162,9 @@ func TestRun_IncludesVersionsInRequest(t *testing.T) {
 
 	var gotBody map[string]any
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewDecoder(r.Body).Decode(&gotBody)
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{}`))
+		_, _ = w.Write([]byte(`{}`))
 	}))
 	defer srv.Close()
 

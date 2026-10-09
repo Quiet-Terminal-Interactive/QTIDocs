@@ -64,8 +64,8 @@ func TestFileStore_SetAndGet(t *testing.T) {
 
 func TestFileStore_SetOverwrites(t *testing.T) {
 	s := newTestStore(t)
-	s.Set(Entry{Subdomain: "acme", Branch: "main"})
-	s.Set(Entry{Subdomain: "acme", Branch: "develop"})
+	_ = s.Set(Entry{Subdomain: "acme", Branch: "main"})
+	_ = s.Set(Entry{Subdomain: "acme", Branch: "develop"})
 
 	got, _, err := s.Get("acme")
 	if err != nil {
@@ -78,8 +78,8 @@ func TestFileStore_SetOverwrites(t *testing.T) {
 
 func TestFileStore_List(t *testing.T) {
 	s := newTestStore(t)
-	s.Set(Entry{Subdomain: "a"})
-	s.Set(Entry{Subdomain: "b"})
+	_ = s.Set(Entry{Subdomain: "a"})
+	_ = s.Set(Entry{Subdomain: "b"})
 
 	entries, err := s.List()
 	if err != nil {
@@ -110,7 +110,7 @@ func TestFileStore_ListEmpty(t *testing.T) {
 
 func TestFileStore_Delete(t *testing.T) {
 	s := newTestStore(t)
-	s.Set(Entry{Subdomain: "acme"})
+	_ = s.Set(Entry{Subdomain: "acme"})
 
 	if err := s.Delete("acme"); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -136,7 +136,7 @@ func TestFileStore_PersistsAcrossInstances(t *testing.T) {
 	path := filepath.Join(dir, "routing.json")
 
 	s1 := Open(path)
-	s1.Set(Entry{Subdomain: "acme", Repo: "acme/widgets"})
+	_ = s1.Set(Entry{Subdomain: "acme", Repo: "acme/widgets"})
 
 	s2 := Open(path)
 	got, ok, err := s2.Get("acme")
@@ -169,7 +169,7 @@ func TestFileStore_ConcurrentSetsAreSerialized(t *testing.T) {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			s.Set(Entry{Subdomain: "site", Branch: "b" + string(rune('a'+i))})
+			_ = s.Set(Entry{Subdomain: "site", Branch: "b" + string(rune('a'+i))})
 		}(i)
 	}
 	wg.Wait()
@@ -185,7 +185,7 @@ func TestFileStore_ConcurrentSetsAreSerialized(t *testing.T) {
 
 func TestEntry_OmitsEmptyOptionalFields(t *testing.T) {
 	s := newTestStore(t)
-	s.Set(Entry{Subdomain: "bare"})
+	_ = s.Set(Entry{Subdomain: "bare"})
 
 	raw, err := os.ReadFile(s.path)
 	if err != nil {

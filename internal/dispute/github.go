@@ -61,7 +61,7 @@ func (g HTTPGitHub) ListOpenIssues(ctx context.Context, owner, repo, label strin
 	if err != nil {
 		return nil, fmt.Errorf("dispute: listing issues on %s/%s: %w", owner, repo, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("dispute: listing issues on %s/%s: unexpected status %s", owner, repo, resp.Status)
@@ -97,7 +97,7 @@ func (g HTTPGitHub) CommentOnIssue(ctx context.Context, owner, repo string, numb
 	if err != nil {
 		return fmt.Errorf("dispute: commenting on %s/%s#%d: %w", owner, repo, number, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusCreated {
 		return fmt.Errorf("dispute: commenting on %s/%s#%d: unexpected status %s", owner, repo, number, resp.Status)
@@ -113,7 +113,7 @@ func (g HTTPGitHub) AddLabel(ctx context.Context, owner, repo string, number int
 	if err != nil {
 		return fmt.Errorf("dispute: labeling %s/%s#%d: %w", owner, repo, number, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("dispute: labeling %s/%s#%d: unexpected status %s", owner, repo, number, resp.Status)
@@ -130,7 +130,7 @@ func (g HTTPGitHub) CloseIssue(ctx context.Context, owner, repo string, number i
 	if err != nil {
 		return fmt.Errorf("dispute: closing %s/%s#%d: %w", owner, repo, number, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("dispute: closing %s/%s#%d: unexpected status %s", owner, repo, number, resp.Status)

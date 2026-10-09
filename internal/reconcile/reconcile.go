@@ -52,7 +52,7 @@ func (g HTTPGitHub) ResolveRef(ctx context.Context, owner, repo, ref string) (st
 	if err != nil {
 		return "", fmt.Errorf("reconcile: resolving %s/%s@%s: %w", owner, repo, ref, err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("reconcile: resolving %s/%s@%s: unexpected status %s", owner, repo, ref, resp.Status)

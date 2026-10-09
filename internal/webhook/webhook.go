@@ -67,7 +67,7 @@ func Handler(store storage.Store, enqueue func(build.Job)) http.Handler {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{"status":"accepted","jobs":%d}`, len(matches))
+		_, _ = fmt.Fprintf(w, `{"status":"accepted","jobs":%d}`, len(matches))
 	})
 }
 

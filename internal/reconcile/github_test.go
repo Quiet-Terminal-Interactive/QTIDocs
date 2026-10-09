@@ -19,7 +19,7 @@ func TestHTTPGitHub_ResolveRef(t *testing.T) {
 			t.Errorf("Authorization = %q, want Bearer tok", got)
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("abc123\n"))
+		_, _ = w.Write([]byte("abc123\n"))
 	}))
 	defer srv.Close()
 
@@ -39,7 +39,7 @@ func TestHTTPGitHub_ResolveRef_NoToken(t *testing.T) {
 			t.Errorf("Authorization = %q, want empty", auth)
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("sha"))
+		_, _ = w.Write([]byte("sha"))
 	}))
 	defer srv.Close()
 

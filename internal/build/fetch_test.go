@@ -76,7 +76,7 @@ func TestGitHubFetcher_Fetch(t *testing.T) {
 			t.Errorf("Authorization = %q, want Bearer tok", got)
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("fake tarball bytes"))
+		_, _ = w.Write([]byte("fake tarball bytes"))
 	}))
 	defer srv.Close()
 
@@ -85,7 +85,7 @@ func TestGitHubFetcher_Fetch(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer rc.Close()
+	defer func() { _ = rc.Close() }()
 	data, _ := io.ReadAll(rc)
 	if string(data) != "fake tarball bytes" {
 		t.Errorf("body = %q", data)
@@ -126,7 +126,7 @@ func TestExtract_BasicFilesUnderConfiguredPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer os.RemoveAll(res.Dir)
+	defer func() { _ = os.RemoveAll(res.Dir) }()
 
 	if res.Files != 2 {
 		t.Errorf("Files = %d, want 2", res.Files)
@@ -155,7 +155,7 @@ func TestExtract_EmptyConfiguredPathTakesWholeTree(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer os.RemoveAll(res.Dir)
+	defer func() { _ = os.RemoveAll(res.Dir) }()
 
 	if res.Files != 1 {
 		t.Errorf("Files = %d, want 1", res.Files)
@@ -172,7 +172,7 @@ func TestExtract_DiscardsSymlinks(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer os.RemoveAll(res.Dir)
+	defer func() { _ = os.RemoveAll(res.Dir) }()
 
 	if res.Files != 1 {
 		t.Errorf("Files = %d, want 1 (symlink discarded)", res.Files)
@@ -192,7 +192,7 @@ func TestExtract_PathTraversalAttemptDiscarded(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer os.RemoveAll(res.Dir)
+	defer func() { _ = os.RemoveAll(res.Dir) }()
 
 	if res.Files != 1 {
 		t.Errorf("Files = %d, want 1 (traversal entry discarded, only index.md written)", res.Files)
@@ -209,7 +209,7 @@ func TestExtract_ConfiguredDirectoryItselfNotWritten(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer os.RemoveAll(res.Dir)
+	defer func() { _ = os.RemoveAll(res.Dir) }()
 
 	if res.Files != 1 {
 		t.Errorf("Files = %d, want 1", res.Files)
@@ -264,7 +264,7 @@ func TestExtract_ByteLimitExactlyAtLimit(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error at exact limit: %v", err)
 	}
-	defer os.RemoveAll(res.Dir)
+	defer func() { _ = os.RemoveAll(res.Dir) }()
 	if res.Bytes != 5 {
 		t.Errorf("Bytes = %d, want 5", res.Bytes)
 	}
@@ -297,7 +297,7 @@ func TestExtract_EmptyTarball(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer os.RemoveAll(res.Dir)
+	defer func() { _ = os.RemoveAll(res.Dir) }()
 	if res.Files != 0 {
 		t.Errorf("Files = %d, want 0", res.Files)
 	}
@@ -311,7 +311,7 @@ func TestExtract_NoMatchingPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer os.RemoveAll(res.Dir)
+	defer func() { _ = os.RemoveAll(res.Dir) }()
 	if res.Files != 0 {
 		t.Errorf("Files = %d, want 0", res.Files)
 	}

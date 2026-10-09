@@ -61,7 +61,7 @@ func (s *FileStore) Record(subdomain string, e Event) error {
 	if err != nil {
 		return fmt.Errorf("analytics: opening raw log: %w", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	data, err := json.Marshal(e)
 	if err != nil {
@@ -278,10 +278,10 @@ func (s *FileStore) writeAgg(subdomain string, agg map[string]DailyAggregate) er
 		return fmt.Errorf("analytics: creating temp file in %s: %w", dir, err)
 	}
 	tmpPath := tmp.Name()
-	defer os.Remove(tmpPath)
+	defer func() { _ = os.Remove(tmpPath) }()
 
 	if _, err := tmp.Write(data); err != nil {
-		tmp.Close()
+		_ = tmp.Close()
 		return fmt.Errorf("analytics: writing %s: %w", tmpPath, err)
 	}
 	if err := tmp.Close(); err != nil {

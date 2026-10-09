@@ -70,7 +70,7 @@ func TestFixtureResolver_Resolve(t *testing.T) {
 
 func TestFixtureResolver_Resolve_FileNotDir(t *testing.T) {
 	root := t.TempDir()
-	os.WriteFile(filepath.Join(root, "notadir"), []byte("x"), 0o644)
+	_ = os.WriteFile(filepath.Join(root, "notadir"), []byte("x"), 0o644)
 	r := FixtureResolver{Root: root}
 
 	_, ok := r.Resolve("notadir")
@@ -250,7 +250,7 @@ func TestServeHTTP_ThemeJSServedAsScript(t *testing.T) {
 func TestServeHTTP_DirectoryTraversalBlocked(t *testing.T) {
 	root := t.TempDir()
 	writeSiteFile(t, root, "acme", "index.html", "home")
-	os.WriteFile(filepath.Join(root, "secret.txt"), []byte("top secret"), 0o644)
+	_ = os.WriteFile(filepath.Join(root, "secret.txt"), []byte("top secret"), 0o644)
 
 	s := New(FixtureResolver{Root: root})
 	req := httptest.NewRequest(http.MethodGet, "http://acme.qtidocs.dev/../secret.txt", nil)
@@ -274,10 +274,10 @@ func (v versionedResolver) Versions(subdomain string) ([]string, bool) {
 
 func TestServeHTTP_VersionedSite(t *testing.T) {
 	root := t.TempDir()
-	os.MkdirAll(filepath.Join(root, "v1"), 0o755)
-	os.WriteFile(filepath.Join(root, "v1", "index.html"), []byte("v1 home"), 0o644)
-	os.MkdirAll(filepath.Join(root, "v2"), 0o755)
-	os.WriteFile(filepath.Join(root, "v2", "index.html"), []byte("v2 home"), 0o644)
+	_ = os.MkdirAll(filepath.Join(root, "v1"), 0o755)
+	_ = os.WriteFile(filepath.Join(root, "v1", "index.html"), []byte("v1 home"), 0o644)
+	_ = os.MkdirAll(filepath.Join(root, "v2"), 0o755)
+	_ = os.WriteFile(filepath.Join(root, "v2", "index.html"), []byte("v2 home"), 0o644)
 
 	s := New(versionedResolver{dir: root, versions: []string{"v1", "v2"}})
 	req := httptest.NewRequest(http.MethodGet, "http://acme.qtidocs.dev/v2", nil)
@@ -291,7 +291,7 @@ func TestServeHTTP_VersionedSite(t *testing.T) {
 
 func TestServeHTTP_VersionedSiteRootNotStripped(t *testing.T) {
 	root := t.TempDir()
-	os.WriteFile(filepath.Join(root, "index.html"), []byte("redirect page"), 0o644)
+	_ = os.WriteFile(filepath.Join(root, "index.html"), []byte("redirect page"), 0o644)
 
 	s := New(versionedResolver{dir: root, versions: []string{"v1", "v2"}})
 	req := httptest.NewRequest(http.MethodGet, "http://acme.qtidocs.dev/", nil)

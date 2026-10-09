@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"strings"
@@ -150,7 +151,9 @@ func TestRun_IgnoresUnrelatedFileChanges(t *testing.T) {
 func TestRun_MissingReservedFile(t *testing.T) {
 	dir := gitRepo(t)
 	chdir(t, dir)
-	os.Remove(filepath.Join(dir, "reserved.yaml"))
+	if err := os.Remove(filepath.Join(dir, "reserved.yaml")); err != nil {
+		t.Fatalf("Remove: %v", err)
+	}
 	base := headSHA(t, dir)
 	writeAndCommit(t, dir, "sites/acme.yaml", validEntryYAML("acme"))
 
@@ -162,15 +165,15 @@ func TestRun_MissingReservedFile(t *testing.T) {
 
 func TestAlwaysAllow(t *testing.T) {
 	var a alwaysAllow
-	ok, err := a.HasWriteAccess(nil, "o", "r", "u")
+	ok, err := a.HasWriteAccess(context.TODO(), "o", "r", "u")
 	if err != nil || !ok {
 		t.Errorf("HasWriteAccess = (%v, %v), want (true, nil)", ok, err)
 	}
-	ok, err = a.OrgMember(nil, "org", "u")
+	ok, err = a.OrgMember(context.TODO(), "org", "u")
 	if err != nil || ok {
 		t.Errorf("OrgMember = (%v, %v), want (false, nil)", ok, err)
 	}
-	ok, err = a.PathExists(nil, "o", "r", "ref", "path")
+	ok, err = a.PathExists(context.TODO(), "o", "r", "ref", "path")
 	if err != nil || !ok {
 		t.Errorf("PathExists = (%v, %v), want (true, nil)", ok, err)
 	}

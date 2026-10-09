@@ -20,7 +20,7 @@ type Event struct {
 
 func HashVisitor(ip, ua string, day time.Time) string {
 	h := sha256.New()
-	fmt.Fprintf(h, "%s|%s|%s", day.UTC().Format(dateLayout), ip, ua)
+	_, _ = fmt.Fprintf(h, "%s|%s|%s", day.UTC().Format(dateLayout), ip, ua)
 	return hex.EncodeToString(h.Sum(nil))
 }
 

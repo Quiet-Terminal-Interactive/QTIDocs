@@ -48,13 +48,13 @@ func (p Pipeline) Run(ctx context.Context, job Job) error {
 	if err != nil {
 		return fmt.Errorf("build: fetch stage: %w", err)
 	}
-	defer rc.Close()
+	defer func() { _ = rc.Close() }()
 
 	extracted, err := Extract(rc, job.Path, "", p.Limits)
 	if err != nil {
 		return fmt.Errorf("build: fetch stage: %w", err)
 	}
-	defer os.RemoveAll(extracted.Dir)
+	defer func() { _ = os.RemoveAll(extracted.Dir) }()
 
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("build: cancelled before render stage: %w", err)
@@ -66,22 +66,22 @@ func (p Pipeline) Run(ctx context.Context, job Job) error {
 	}
 
 	if err := site.Build(extracted.Dir, outDir, job.Title); err != nil {
-		os.RemoveAll(outDir)
+		_ = os.RemoveAll(outDir)
 		return fmt.Errorf("build: render stage: %w", err)
 	}
 
 	if err := ctx.Err(); err != nil {
-		os.RemoveAll(outDir)
+		_ = os.RemoveAll(outDir)
 		return fmt.Errorf("build: build-time limit exceeded: %w", err)
 	}
 
 	outBytes, err := dirSize(outDir)
 	if err != nil {
-		os.RemoveAll(outDir)
+		_ = os.RemoveAll(outDir)
 		return fmt.Errorf("build: %w", err)
 	}
 	if outBytes > p.Limits.MaxOutputBytes {
-		os.RemoveAll(outDir)
+		_ = os.RemoveAll(outDir)
 		return fmt.Errorf("build: rendered output is %d bytes, exceeding the %d-byte limit", outBytes, p.Limits.MaxOutputBytes)
 	}
 
@@ -118,7 +118,7 @@ func (p Pipeline) publish(subdomain, outDir string, mutate func(*storage.Entry))
 	}
 
 	if previous != "" && previous != outDir {
-		os.RemoveAll(previous)
+		_ = os.RemoveAll(previous)
 	}
 	return nil
 }
@@ -135,12 +135,12 @@ func (p Pipeline) runVersioned(ctx context.Context, job Job) error {
 
 	deployed, err := p.buildEachVersion(ctx, job, outDir)
 	if err != nil {
-		os.RemoveAll(outDir)
+		_ = os.RemoveAll(outDir)
 		return err
 	}
 
 	if err := p.finishVersionedOutput(ctx, job, outDir); err != nil {
-		os.RemoveAll(outDir)
+		_ = os.RemoveAll(outDir)
 		return err
 	}
 
@@ -185,7 +185,7 @@ func (p Pipeline) buildEachVersion(ctx context.Context, job Job, outDir string) 
 			return nil, fmt.Errorf("build: fetch stage: version %q: %w", v.Name, err)
 		}
 		extracted, err := Extract(rc, job.Path, "", p.Limits)
-		rc.Close()
+		_ = rc.Close()
 		if err != nil {
 			return nil, fmt.Errorf("build: fetch stage: version %q: %w", v.Name, err)
 		}
@@ -194,7 +194,7 @@ func (p Pipeline) buildEachVersion(ctx context.Context, job Job, outDir string) 
 			Current: v.Name,
 			Names:   names,
 		})
-		os.RemoveAll(extracted.Dir)
+		_ = os.RemoveAll(extracted.Dir)
 		if err != nil {
 			return nil, fmt.Errorf("build: render stage: version %q: %w", v.Name, err)
 		}
@@ -239,7 +239,7 @@ func Teardown(store storage.Store, subdomain string) error {
 		return fmt.Errorf("build: teardown: removing entry for %q: %w", subdomain, err)
 	}
 	if e.OutputDir != "" {
-		os.RemoveAll(e.OutputDir)
+		_ = os.RemoveAll(e.OutputDir)
 	}
 	return nil
 }
@@ -261,7 +261,7 @@ func writeVersionRedirect(outDir, siteTitle, defaultVersion string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	return theme.RenderVersionRedirect(f, siteTitle, "/"+defaultVersion+"/")
 }
 

@@ -44,9 +44,9 @@ func TestFileStore_Subdomains_Empty(t *testing.T) {
 func TestFileStore_RollupComputesAggregate(t *testing.T) {
 	s := newTestFileStore(t)
 	d := day(2026, 1, 1)
-	s.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h1", Referrer: "https://google.com/x"})
-	s.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h2"})
-	s.Record("acme", Event{Path: "/about", Timestamp: d, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h1", Referrer: "https://google.com/x"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h2"})
+	_ = s.Record("acme", Event{Path: "/about", Timestamp: d, VisitorHash: "h1"})
 
 	if err := s.Rollup("acme", d); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -88,7 +88,7 @@ func TestFileStore_Rollup_NoEventsForDay(t *testing.T) {
 func TestFileStore_Aggregate_FallsBackToRawWhenNotRolledUp(t *testing.T) {
 	s := newTestFileStore(t)
 	d := day(2026, 1, 1)
-	s.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h1"})
 
 	sum, err := s.Aggregate("acme", nil, d)
 	if err != nil {
@@ -102,9 +102,9 @@ func TestFileStore_Aggregate_FallsBackToRawWhenNotRolledUp(t *testing.T) {
 func TestFileStore_Aggregate_DateRangeFiltering(t *testing.T) {
 	s := newTestFileStore(t)
 	d1, d2, d3 := day(2026, 1, 1), day(2026, 1, 2), day(2026, 1, 3)
-	s.Record("acme", Event{Path: "/", Timestamp: d1, VisitorHash: "h1"})
-	s.Record("acme", Event{Path: "/", Timestamp: d2, VisitorHash: "h1"})
-	s.Record("acme", Event{Path: "/", Timestamp: d3, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d1, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d2, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d3, VisitorHash: "h1"})
 
 	sum, err := s.Aggregate("acme", &d2, d3)
 	if err != nil {
@@ -118,8 +118,8 @@ func TestFileStore_Aggregate_DateRangeFiltering(t *testing.T) {
 func TestFileStore_Aggregate_NilFromMeansAllTime(t *testing.T) {
 	s := newTestFileStore(t)
 	d1, d2 := day(2026, 1, 1), day(2026, 1, 2)
-	s.Record("acme", Event{Path: "/", Timestamp: d1, VisitorHash: "h1"})
-	s.Record("acme", Event{Path: "/", Timestamp: d2, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d1, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d2, VisitorHash: "h1"})
 
 	sum, err := s.Aggregate("acme", nil, d2)
 	if err != nil {
@@ -145,8 +145,8 @@ func TestFileStore_Purge_RemovesOldRawLogsButKeepsAggregates(t *testing.T) {
 	s := newTestFileStore(t)
 	oldDay := day(2026, 1, 1)
 	newDay := day(2026, 2, 1)
-	s.Record("acme", Event{Path: "/", Timestamp: oldDay, VisitorHash: "h1"})
-	s.Record("acme", Event{Path: "/", Timestamp: newDay, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: oldDay, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: newDay, VisitorHash: "h1"})
 
 	if err := s.Rollup("acme", oldDay); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -176,7 +176,7 @@ func TestFileStore_Purge_MissingSubdomainIsNoop(t *testing.T) {
 func TestFileStore_Rollup_Idempotent(t *testing.T) {
 	s := newTestFileStore(t)
 	d := day(2026, 1, 1)
-	s.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h1"})
+	_ = s.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h1"})
 
 	if err := s.Rollup("acme", d); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -199,8 +199,8 @@ func TestFileStore_PersistsAcrossInstances(t *testing.T) {
 	d := day(2026, 1, 1)
 
 	s1 := Open(dir)
-	s1.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h1"})
-	s1.Rollup("acme", d)
+	_ = s1.Record("acme", Event{Path: "/", Timestamp: d, VisitorHash: "h1"})
+	_ = s1.Rollup("acme", d)
 
 	s2 := Open(dir)
 	sum, err := s2.Aggregate("acme", nil, d)
@@ -218,7 +218,7 @@ func TestFileStore_TopPagesCappedAndRanked(t *testing.T) {
 	for i := 0; i < 12; i++ {
 		views := 12 - i
 		for v := 0; v < views; v++ {
-			s.Record("acme", Event{Path: pathN(i), Timestamp: d, VisitorHash: "h"})
+			_ = s.Record("acme", Event{Path: pathN(i), Timestamp: d, VisitorHash: "h"})
 		}
 	}
 

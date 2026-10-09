@@ -58,7 +58,7 @@ func Chdir(t *testing.T, dir string) {
 	if err := os.Chdir(dir); err != nil {
 		t.Fatalf("Chdir: %v", err)
 	}
-	t.Cleanup(func() { os.Chdir(old) })
+	t.Cleanup(func() { _ = os.Chdir(old) })
 }
 
 func HeadSHA(t *testing.T, dir string) string {

@@ -13,7 +13,7 @@ func TestHTTPGitHub_HasWriteAccess_True(t *testing.T) {
 			t.Errorf("path = %s", r.URL.Path)
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"permission":"write"}`))
+		_, _ = w.Write([]byte(`{"permission":"write"}`))
 	}))
 	defer srv.Close()
 
@@ -30,7 +30,7 @@ func TestHTTPGitHub_HasWriteAccess_True(t *testing.T) {
 func TestHTTPGitHub_HasWriteAccess_Admin(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"permission":"admin"}`))
+		_, _ = w.Write([]byte(`{"permission":"admin"}`))
 	}))
 	defer srv.Close()
 
@@ -47,7 +47,7 @@ func TestHTTPGitHub_HasWriteAccess_Admin(t *testing.T) {
 func TestHTTPGitHub_HasWriteAccess_ReadOnly(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"permission":"read"}`))
+		_, _ = w.Write([]byte(`{"permission":"read"}`))
 	}))
 	defer srv.Close()
 

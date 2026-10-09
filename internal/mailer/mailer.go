@@ -97,10 +97,10 @@ func (s SMTP) Send(ctx context.Context, msg Message) error {
 
 	c, err := smtp.NewClient(conn, s.Host)
 	if err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return fmt.Errorf("mailer: starting SMTP session: %w", err)
 	}
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	if s.Port != 465 {
 		if ok, _ := c.Extension("STARTTLS"); ok {
@@ -128,8 +128,8 @@ func (s SMTP) Send(ctx context.Context, msg Message) error {
 		return fmt.Errorf("mailer: DATA: %w", err)
 	}
 	if _, err := w.Write(raw); err != nil {
-		w.Close()
-		c.Quit()
+		_ = w.Close()
+		_ = c.Quit()
 		return fmt.Errorf("mailer: writing message: %w", err)
 	}
 	if err := w.Close(); err != nil {

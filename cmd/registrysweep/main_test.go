@@ -28,9 +28,9 @@ func TestRun_ReportsRegisteredSubdomains(t *testing.T) {
 		Registered []string `json:"registered"`
 	}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewDecoder(r.Body).Decode(&gotBody)
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{"torn_down":1}`))
+		_, _ = w.Write([]byte(`{"torn_down":1}`))
 	}))
 	defer srv.Close()
 
@@ -50,9 +50,9 @@ func TestRun_EmptyRegistry(t *testing.T) {
 		Registered []string `json:"registered"`
 	}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewDecoder(r.Body).Decode(&gotBody)
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{"torn_down":0}`))
+		_, _ = w.Write([]byte(`{"torn_down":0}`))
 	}))
 	defer srv.Close()
 
@@ -71,12 +71,14 @@ func TestRun_AuthorizationHeaderSet(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotAuth = r.Header.Get("Authorization")
 		w.WriteHeader(http.StatusAccepted)
-		w.Write([]byte(`{}`))
+		_, _ = w.Write([]byte(`{}`))
 	}))
 	defer srv.Close()
 
 	client := &http.Client{Timeout: 5 * time.Second}
-	run(dir, srv.URL, "my-secret", client)
+	if err := run(dir, srv.URL, "my-secret", client); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if gotAuth != "Bearer my-secret" {
 		t.Errorf("Authorization = %q, want Bearer my-secret", gotAuth)
 	}

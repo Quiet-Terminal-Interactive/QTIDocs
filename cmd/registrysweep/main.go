@@ -66,7 +66,7 @@ func run(sitesDir, platformURL, secret string, client *http.Client) error {
 	if err != nil {
 		return fmt.Errorf("calling platform: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusAccepted {
 		return fmt.Errorf("platform returned %s", resp.Status)

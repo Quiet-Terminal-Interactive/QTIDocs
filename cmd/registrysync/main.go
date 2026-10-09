@@ -124,7 +124,7 @@ func register(client *http.Client, platformURL, secret string, entry registry.En
 	if err != nil {
 		return fmt.Errorf("calling platform: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusAccepted {
 		return fmt.Errorf("platform returned %s", resp.Status)

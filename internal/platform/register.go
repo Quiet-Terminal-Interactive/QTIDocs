@@ -121,7 +121,7 @@ func RegisterHandler(store storage.Store, builder Builder, mail mailer.Mailer, s
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{"status":"accepted","subdomain":%q,"secret_emailed":%t}`, req.Subdomain, rotate)
+		_, _ = fmt.Fprintf(w, `{"status":"accepted","subdomain":%q,"secret_emailed":%t}`, req.Subdomain, rotate)
 	})
 }
 

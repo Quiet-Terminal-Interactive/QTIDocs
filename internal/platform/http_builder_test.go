@@ -13,7 +13,7 @@ func TestHTTPBuilder_Enqueue(t *testing.T) {
 	var gotJob BuildJob
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotAuth = r.Header.Get("Authorization")
-		json.NewDecoder(r.Body).Decode(&gotJob)
+		_ = json.NewDecoder(r.Body).Decode(&gotJob)
 		w.WriteHeader(http.StatusAccepted)
 	}))
 	defer srv.Close()
@@ -51,7 +51,7 @@ func TestHTTPBuilder_Teardown(t *testing.T) {
 	}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotAuth = r.Header.Get("Authorization")
-		json.NewDecoder(r.Body).Decode(&gotBody)
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
 		w.WriteHeader(http.StatusAccepted)
 	}))
 	defer srv.Close()

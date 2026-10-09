@@ -74,7 +74,7 @@ func fakeSMTPServer(t *testing.T) (port int, received <-chan string) {
 	if err != nil {
 		t.Fatalf("listen: %v", err)
 	}
-	t.Cleanup(func() { ln.Close() })
+	t.Cleanup(func() { _ = ln.Close() })
 	out := make(chan string, 1)
 
 	go func() {
@@ -82,9 +82,9 @@ func fakeSMTPServer(t *testing.T) (port int, received <-chan string) {
 		if err != nil {
 			return
 		}
-		defer conn.Close()
+		defer func() { _ = conn.Close() }()
 		r := bufio.NewReader(conn)
-		reply := func(s string) { fmt.Fprintf(conn, "%s\r\n", s) }
+		reply := func(s string) { _, _ = fmt.Fprintf(conn, "%s\r\n", s) }
 		reply("220 fake ESMTP")
 		for {
 			line, err := r.ReadString('\n')

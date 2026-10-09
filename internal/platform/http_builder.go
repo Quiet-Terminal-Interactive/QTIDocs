@@ -39,7 +39,7 @@ func (b HTTPBuilder) Enqueue(ctx context.Context, job BuildJob) error {
 	if err != nil {
 		return fmt.Errorf("platform: calling worker: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusAccepted {
 		return fmt.Errorf("platform: worker returned %s", resp.Status)
@@ -66,7 +66,7 @@ func (b HTTPBuilder) Teardown(ctx context.Context, subdomain string) error {
 	if err != nil {
 		return fmt.Errorf("platform: calling worker teardown: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusAccepted {
 		return fmt.Errorf("platform: worker teardown returned %s", resp.Status)
