@@ -1,0 +1,33 @@
+name: registry deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "sites/**"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Register changed sites with the platform
+        env:
+          QTIDOCS_PLATFORM_SECRET: ${{ secrets.QTIDOCS_PLATFORM_SECRET }}
+        run: |
+          BASE_COMMIT="${{ github.event.before }}"
+          if [ -z "$BASE_COMMIT" ] || [ "$BASE_COMMIT" = "0000000000000000000000000000000000000000" ]; then
+            BASE_COMMIT="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+          fi
+          go run ./cmd/registrysync \
+            -sites-dir sites \
+            -base "$BASE_COMMIT" \
+            -platform-url "https://api.qtidocs.dev/internal/register"

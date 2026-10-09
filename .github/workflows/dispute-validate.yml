@@ -1,0 +1,50 @@
+name: dispute validate
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  validate-initial:
+    if: contains(github.event.issue.labels.*.name, 'dispute-initial')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Validate 14-day deadline
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          go run ./cmd/disputevalidate -kind initial \
+            -owner "${{ github.repository_owner }}" \
+            -repo "${{ github.event.repository.name }}" \
+            -number "${{ github.event.issue.number }}" \
+            -created "${{ github.event.issue.created_at }}"
+
+  validate-appeal:
+    if: contains(github.event.issue.labels.*.name, 'dispute-appeal')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Validate 31-day deadline
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          go run ./cmd/disputevalidate -kind appeal \
+            -owner "${{ github.repository_owner }}" \
+            -repo "${{ github.event.repository.name }}" \
+            -number "${{ github.event.issue.number }}"

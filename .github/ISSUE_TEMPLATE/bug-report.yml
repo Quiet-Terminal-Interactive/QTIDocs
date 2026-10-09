@@ -1,0 +1,39 @@
+name: Bug report
+description: Something in qtidocs (rendering, the registry CI, the build pipeline, serving) isn't working as it should.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For a security vulnerability, use "Security vulnerability" from the template chooser instead, don't file it here.
+
+        For a hosted site misbehaving (not the platform itself), use "Abuse report" instead.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: input
+    id: subdomain
+    attributes:
+      label: Affected subdomain (if applicable)
+      placeholder: example.qtidocs.dev
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs, error output, or screenshots
+      render: shell

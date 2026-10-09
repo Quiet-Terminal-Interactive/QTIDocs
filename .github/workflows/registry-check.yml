@@ -1,0 +1,44 @@
+name: registry check
+
+on:
+  pull_request:
+    paths:
+      - "sites/**"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+          persist-credentials: false
+
+      - uses: actions/checkout@v6
+        with:
+          path: pr
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: base/go.mod
+          cache-dependency-path: base/go.sum
+
+      - name: Build registrycheck from the base branch
+        working-directory: base
+        run: go build -o "$RUNNER_TEMP/registrycheck" ./cmd/registrycheck
+
+      - name: Run registrycheck
+        working-directory: pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          "$RUNNER_TEMP/registrycheck" \
+            -sites-dir sites \
+            -reserved ../base/reserved.yaml \
+            -base "origin/$BASE_REF" \
+            -author "$PR_AUTHOR"

@@ -1,0 +1,41 @@
+name: Abuse report
+description: Report a *.qtidocs.dev subdomain hosting phishing, spam, illegal content, or other abuse.
+title: "[Abuse] <subdomain>.qtidocs.dev"
+labels:
+  - abuse
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this to report a hosted site that's doing something it shouldn't be; phishing disguised as docs, spam, illegal content, or similar. This is reviewed by Quiet-Terminal-Interactive org members, who can take down a site directly.
+
+        If you're disclosing a security vulnerability in the qtidocs platform itself (not abuse of a hosted site), don't use this form — see [SECURITY.md](../../SECURITY.md) instead.
+
+        If you're disputing who a subdomain name was given to (a trademark claim), don't use this form either — use the "Subdomain name dispute" template.
+  - type: input
+    id: subdomain
+    attributes:
+      label: Subdomain
+      description: The full subdomain being reported.
+      placeholder: example.qtidocs.dev
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What's wrong with this site?
+      description: Describe what you found, be as specific as possible (which page, what it does, when you saw it).
+    validations:
+      required: true
+  - type: input
+    id: evidence
+    attributes:
+      label: Link(s) to evidence
+      description: Screenshot, archived page, or other supporting link, if you have one.
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: This report is about content hosted on qtidocs.dev, not a security bug in the qtidocs platform code.
+          required: true

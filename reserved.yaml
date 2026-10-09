@@ -1,0 +1,27 @@
+# Reserved subdomains for qtidocs.dev. A registration PR against sites/ claiming any of these (via .github/workflows/registry.yml, which runs cmd/registrycheck) is rejected regardless of repo ownership.
+#
+# Single- and two-letter subdomains are reserved too, but that rule is enforced in code (internal/registry.ReservedConfig.IsReserved), not listed here, so it can't be silently dropped by editing this file.
+reserved:
+  - www
+  - api
+  - admin
+  - app
+  - mail
+  - smtp
+  - ftp
+  - status
+  - docs
+  - blog
+  - support
+  - help
+  - dashboard
+  - assets
+  - static
+  - cdn
+  - ci
+  - webhook
+  - webhooks
+  - staging
+  - dev
+  - test
+  - qtidocs

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}}</title>
+{{- if .Description}}
+<meta name="description" content="{{.Description}}">
+{{- end}}
+<link rel="stylesheet" href="{{.BasePath}}/_qtidocs/theme.css">
+{{- if .HasOverrideCSS}}
+<link rel="stylesheet" href="{{.BasePath}}/assets/qtidocs.css">
+{{- end}}
+<script src="{{.BasePath}}/_qtidocs/theme.js"></script>
+</head>
+<body data-qtidocs-base="{{.BasePath}}">
+<div class="qtidocs-layout">
+<nav class="qtidocs-nav" aria-label="Site navigation">
+<div class="qtidocs-nav-header">
+<a class="qtidocs-nav-home" href="{{.BasePath}}/">{{.SiteTitle}}</a>
+<button type="button" id="qtidocs-theme-toggle" class="qtidocs-theme-toggle" aria-label="Switch to dark mode">
+<span class="qtidocs-icon-moon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+<span class="qtidocs-icon-sun" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg></span>
+</button>
+</div>
+{{- if .Versions}}
+<div class="qtidocs-version-switcher">
+<select id="qtidocs-version-select" aria-label="Select version">
+{{- range .Versions}}
+<option value="{{.Path}}"{{if eq .Name $.CurrentVersion}} selected{{end}}>{{.Name}}</option>
+{{- end}}
+</select>
+</div>
+{{- end}}
+<div class="qtidocs-search" role="search">
+<input type="search" id="qtidocs-search-input" class="qtidocs-search-input" placeholder="Search docs…" aria-label="Search docs" autocomplete="off">
+<ul id="qtidocs-search-results" class="qtidocs-search-results" hidden></ul>
+</div>
+{{- if .Nav}}
+<ul>
+{{- range .Nav}}
+{{template "navEntry" .}}
+{{- end}}
+</ul>
+{{- end}}
+</nav>
+<main class="qtidocs-content">
+<article>
+{{.Content}}
+</article>
+</main>
+</div>
+<script src="{{.BasePath}}/_qtidocs/search.js" defer></script>
+<script src="{{.BasePath}}/_qtidocs/analytics.js" defer></script>
+</body>
+</html>
+{{- define "navEntry"}}
+<li>
+{{- if .Path}}
+<a href="/{{.Path}}">{{.Title}}</a>
+{{- else}}
+<span class="qtidocs-nav-section">{{.Title}}</span>
+{{- end}}
+{{- if .Children}}
+<ul>
+{{- range .Children}}
+{{template "navEntry" .}}
+{{- end}}
+</ul>
+{{- end}}
+</li>
+{{- end}}

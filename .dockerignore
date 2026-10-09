@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+!.env.example
+/bin/
+*.test
+*.out
+.DS_Store
+sites/

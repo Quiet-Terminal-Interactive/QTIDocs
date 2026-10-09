@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stats · {{.SiteTitle}}</title>
+<link rel="stylesheet" href="{{.BasePath}}/_qtidocs/theme.css">
+<script src="{{.BasePath}}/_qtidocs/theme.js"></script>
+</head>
+<body data-qtidocs-base="{{.BasePath}}">
+<main class="qtidocs-stats">
+<h1>{{.SiteTitle}} — public stats</h1>
+<p class="qtidocs-stats-sub">Page views and traffic for this site.</p>
+<div class="qtidocs-stats-ranges" role="group" aria-label="Time range">
+<button type="button" data-qtidocs-range="today">Today</button>
+<button type="button" data-qtidocs-range="7d" class="qtidocs-stats-range-active">7 days</button>
+<button type="button" data-qtidocs-range="30d">30 days</button>
+<button type="button" data-qtidocs-range="all">All time</button>
+</div>
+<p id="qtidocs-stats-status" class="qtidocs-stats-status" role="status"></p>
+<div class="qtidocs-stats-totals">
+<div class="qtidocs-stats-stat">
+<span id="qtidocs-stats-views" class="qtidocs-stats-number">0</span>
+<span class="qtidocs-stats-label">page views</span>
+</div>
+<div class="qtidocs-stats-stat">
+<span id="qtidocs-stats-uniques" class="qtidocs-stats-number">0</span>
+<span class="qtidocs-stats-label">unique visitors</span>
+</div>
+</div>
+<div class="qtidocs-stats-columns">
+<section>
+<h2>Top pages</h2>
+<ul id="qtidocs-stats-pages" class="qtidocs-stats-list"></ul>
+</section>
+<section>
+<h2>Referrers</h2>
+<ul id="qtidocs-stats-referrers" class="qtidocs-stats-list"></ul>
+</section>
+</div>
+</main>
+<script src="{{.BasePath}}/_qtidocs/stats.js" defer></script>
+</body>
+</html>

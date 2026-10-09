@@ -1,0 +1,24 @@
+name: registry sweep
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Sweep unregistered sites
+        env:
+          QTIDOCS_PLATFORM_SECRET: ${{ secrets.QTIDOCS_PLATFORM_SECRET }}
+        run: |
+          go run ./cmd/registrysweep \
+            -sites-dir sites \
+            -platform-url "https://api.qtidocs.dev/internal/sweep"

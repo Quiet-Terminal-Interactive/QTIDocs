@@ -1,0 +1,8 @@
+subdomain: docs
+title: Acme Docs
+repo: github.com/quiet-terminal-interactive/qtidocs
+branch: main
+path: qtidocs/
+contact: hello@quietterminal.co.uk
+maintainers:
+  - KohanMathers

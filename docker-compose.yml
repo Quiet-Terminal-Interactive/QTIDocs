@@ -1,0 +1,57 @@
+services:
+  worker:
+    build: .
+    image: qtidocs
+    entrypoint: [ "/app/worker" ]
+    command:
+      - -routing=/data/routing.json
+      - -sites-root=/data/sites
+      - -addr=:8082
+      - -secret=${QTIDOCS_WORKER_SECRET}
+      - -github-token=${QTIDOCS_GITHUB_TOKEN}
+      - -bot-token=${QTIDOCS_BOT_TOKEN}
+    env_file: .env
+    ports:
+      - "8082:8082"
+    volumes:
+      - data:/data
+    restart: unless-stopped
+
+  platform:
+    build: .
+    image: qtidocs
+    entrypoint: [ "/app/platform" ]
+    command:
+      - -routing=/data/routing.json
+      - -addr=:8081
+      - -secret=${QTIDOCS_PLATFORM_SECRET}
+      - -worker-url=http://worker:8082/internal/build
+      - -worker-teardown-url=http://worker:8082/internal/teardown
+      - -worker-secret=${QTIDOCS_WORKER_SECRET}
+    env_file: .env
+    ports:
+      - "8081:8081"
+    volumes:
+      - data:/data
+    depends_on:
+      - worker
+    restart: unless-stopped
+
+  server:
+    build: .
+    image: qtidocs
+    entrypoint: [ "/app/server" ]
+    command:
+      - -routing=/data/routing.json
+      - -addr=:8080
+      - -analytics=/data/analytics
+    ports:
+      - "8080:8080"
+    volumes:
+      - data:/data
+    depends_on:
+      - worker
+    restart: unless-stopped
+
+volumes:
+  data:
