@@ -1,0 +1,8 @@
+subdomain: qtiauth
+title: QTIAuth Docs
+repo: github.com/quiet-terminal-interactive/qtiauth
+branch: main
+path: qtidocs/
+contact: hello@quietterminal.co.uk
+maintainers:
+  - KohanMathers
